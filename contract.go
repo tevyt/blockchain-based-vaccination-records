@@ -19,7 +19,16 @@ type Patient struct {
 	FirstName string `json:"firstName"`
 	LastName string `json:"lastName"`
 	DateOfBirth string `json:"dateOfBirth"`
+	Vaccinations []Vaccination `json:"vaccinations"`
 }
+
+type Vaccination struct {
+	ID string `json:"id"`
+	Name string `json:"name"`
+	Date string `json:"date"`
+	HealthCareProvider string `json:"healthCareProvider"`
+}
+
 
 func (s *SmartContract) PatientExists(ctx contractapi.TransactionContextInterface, id string) (bool, error) {
 	patientJSON, err := ctx.GetStub().GetState(id)
@@ -44,6 +53,7 @@ func (s *SmartContract) CreatePatient(ctx contractapi.TransactionContextInterfac
 		FirstName: firstName,
 		LastName: lastName,
 		DateOfBirth: dateOfBirth,
+		Vaccinations: []Vaccination{},
 	}
 	patientJSON, err := json.Marshal(patient)
 	if err != nil {
