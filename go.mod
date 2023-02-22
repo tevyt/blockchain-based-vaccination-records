@@ -11,6 +11,7 @@ require (
 	github.com/gobuffalo/packd v1.0.1 // indirect
 	github.com/gobuffalo/packr v1.30.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/hyperledger/fabric-chaincode-go v0.0.0-20220720122508-9207360bbddd // indirect
 	github.com/hyperledger/fabric-contract-api-go v1.2.0 // indirect
 	github.com/hyperledger/fabric-protos-go v0.0.0-20220613214546-bf864f01d75e // indirect

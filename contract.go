@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
+	"github.com/google/uuid"
 )
 
 
@@ -79,6 +80,35 @@ func (s *SmartContract) ReadPatient(ctx contractapi.TransactionContextInterface,
 	}
 
 	return &patient, nil
+}
+
+func (s *SmartContract) AddVaccinationToPatient(ctx contractapi.TransactionContextInterface, patientID string, vaccineName string, vaccineDate string, healthCareProvider string) (*Patient, error) {
+	patient, err := s.ReadPatient(ctx, patientID)
+	if err != nil {
+		return nil, err
+	}
+
+	vaccineId := uuid.New().String()
+	vaccination := Vaccination{
+		ID: vaccineId,
+		Name: vaccineName,
+		Date: vaccineDate,
+		HealthCareProvider: healthCareProvider,
+	}
+
+	patient.Vaccinations = append(patient.Vaccinations, vaccination)
+
+	patientJSON, err := json.Marshal(patient)
+	if err != nil {
+		return nil, err
+	}
+
+	err = ctx.GetStub().PutState(patientID, patientJSON)
+	if err != nil {
+		return nil, err
+	}
+
+	return patient, nil
 }
 
 
