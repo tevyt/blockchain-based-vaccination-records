@@ -55,7 +55,11 @@ export default function Home() {
         <button onClick={handleSearch}>Search</button>
       </form>
       {patientData.loading && <h1>Loading...</h1>}
-      {patientData.error && <h1>Error: {patientData.error}</h1>}
+      {patientData.error && (
+        <h1 style={{ color: "red" }}>
+          Error: An Error occured fetching patient.
+        </h1>
+      )}
       {patientData.data && (
         <form style={{ marginTop: "20px" }}>
           <div>
@@ -74,7 +78,7 @@ export default function Home() {
             <h2>Vaccinations</h2>
             {patientData.data?.vaccinations?.map((vaccination) => {
               return (
-                <div key={vaccination.vaccine.id}>
+                <div key={vaccination.vaccine.id} style={{ marginTop: "10px" }}>
                   <div>
                     <label>Disease</label>
                     <input
