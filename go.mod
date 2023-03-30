@@ -2,6 +2,8 @@ module distribute-vaccine-verification
 
 go 1.19
 
+require github.com/pkg/errors v0.9.1
+
 require (
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.20.0 // indirect
@@ -12,6 +14,7 @@ require (
 	github.com/gobuffalo/packr v1.30.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect
+	github.com/hyperledger/fabric v2.1.1+incompatible // indirect
 	github.com/hyperledger/fabric-chaincode-go v0.0.0-20220720122508-9207360bbddd // indirect
 	github.com/hyperledger/fabric-contract-api-go v1.2.0 // indirect
 	github.com/hyperledger/fabric-protos-go v0.0.0-20220613214546-bf864f01d75e // indirect
@@ -28,5 +31,6 @@ require (
 	google.golang.org/genproto v0.0.0-20220719170305-83ca9fad585f // indirect
 	google.golang.org/grpc v1.48.0 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
+	gopkg.in/hyperledger/fabric.v2 v2.1.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

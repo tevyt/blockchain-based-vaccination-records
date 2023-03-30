@@ -24,9 +24,9 @@ type Patient struct {
 }
 
 type Vaccine struct {
-	ID     string `json:"id"`
-	Diseas string `json:"diseas"`
-	Brand  string `json:"brand"`
+	ID      string `json:"id"`
+	Disease string `json:"disease"`
+	Brand   string `json:"brand"`
 }
 
 type VaccinationListing struct {
@@ -82,7 +82,7 @@ func (s *SmartContract) ReadPatient(ctx contractapi.TransactionContextInterface,
 		return nil, fmt.Errorf("Failed to read from world state: %v", err)
 	}
 	if patientJSON == nil {
-		return nil, fmt.Errorf("The patient does not exist")
+		return nil, fmt.Errorf("Patient not found.")
 	}
 
 	var patient Patient
@@ -112,24 +112,23 @@ func (s *SmartContract) ReadVaccinationListing(ctx contractapi.TransactionContex
 	return &vaccinationListing, nil
 }
 
-func (s *SmartContract) AddVaccinationToPatient(ctx contractapi.TransactionContextInterface, nationalID string, country string, disease string, brand string, vaccineDate string, healthCareProvider string) (*Patient, error) {
-	patientID := createID(nationalID, country)
+func (s *SmartContract) AddVaccinationToPatient(ctx contractapi.TransactionContextInterface, nationalID string, country string, disease string, brand string, vaccineDate string, healthCareProvider string) error {
 	patient, err := s.ReadPatient(ctx, nationalID, country)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	validVaccines, err := s.ReadVaccinationListing(ctx)
 
-	if err != nil {
-		for i := 0; i < len(validVaccines.Vaccines); i++ {
-			if validVaccines.Vaccines[i].Diseas == disease && validVaccines.Vaccines[i].Brand == brand {
+	if err == nil {
+		for _, validVaccine := range validVaccines.Vaccines {
+			if validVaccine.Disease == disease && validVaccine.Brand == brand {
 
 				vaccineId := uuid.New().String()
 
 				vaccination := Vaccination{
 					ID:                 vaccineId,
-					Vaccine:            validVaccines.Vaccines[i],
+					Vaccine:            validVaccine,
 					Date:               vaccineDate,
 					HealthCareProvider: healthCareProvider,
 				}
@@ -137,22 +136,19 @@ func (s *SmartContract) AddVaccinationToPatient(ctx contractapi.TransactionConte
 				patient.Vaccinations = append(patient.Vaccinations, vaccination)
 
 				patientJSON, err := json.Marshal(patient)
+
 				if err != nil {
-					return nil, err
+					return err
 				}
 
-				err = ctx.GetStub().PutState(patientID, patientJSON)
-				if err != nil {
-					return nil, err
-				}
+				return ctx.GetStub().PutState(patient.ID, patientJSON)
 
-				return patient, nil
 			}
 		}
-		return nil, fmt.Errorf("The vaccine is not valid")
+		return fmt.Errorf("The vaccine is not valid")
 	}
 
-	return nil, err
+	return err
 }
 
 // Create ID from nationalID and country
