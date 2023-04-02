@@ -54,7 +54,7 @@ export default function Home() {
     setNewVaccination({
       disease: Object.keys(vaccineListing)[0],
       brand: vaccineListing[Object.keys(vaccineListing)[0]][0],
-      healthCareProvider: "",
+      healthCareProvider: process.env["HEALTH_CARE_PROVIDER"] || "City MD",
       date: format(new Date(), "yyyy-MM-dd"),
     });
   };
@@ -71,13 +71,6 @@ export default function Home() {
     setNewVaccination((prev) => ({
       ...prev,
       brand: e.target.value,
-    }));
-  };
-
-  const handleNewVaccinationHealthCareProviderChange = (e) => {
-    setNewVaccination((prev) => ({
-      ...prev,
-      healthCareProvider: e.target.value,
     }));
   };
 
@@ -184,7 +177,7 @@ export default function Home() {
                       <input
                         type="text"
                         disabled
-                        value={vaccination.healthCareProvider}
+                        value={process.env["HEALTH_CARE_PROVIDER"] || "City MD"}
                       />
                     </td>
                     <td>
@@ -230,8 +223,8 @@ export default function Home() {
                   <td>
                     <input
                       type="text"
+                      disabled
                       value={newVaccination.healthCareProvider}
-                      onChange={handleNewVaccinationHealthCareProviderChange}
                     />
                   </td>
                   <td>
