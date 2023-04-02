@@ -81,6 +81,39 @@ export default function Home() {
     }));
   };
 
+  const saveNewVaccination = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await axios.post("/api/vaccines", {
+        id: patientId,
+        country: patientCountry,
+        ...newVaccination,
+      });
+    } finally {
+      setPatientData((patiendData) => {
+        return {
+          ...patiendData,
+          data: {
+            ...patiendData.data,
+            vaccinations: [
+              ...patiendData.data.vaccinations,
+              {
+                vaccine: {
+                  brand: newVaccination.brand,
+                  disease: newVaccination.disease,
+                  id: newVaccination.disease + newVaccination.brand,
+                  healthCareProvider: newVaccination.healthCareProvider,
+                },
+              },
+            ],
+          },
+        };
+      });
+
+      setNewVaccination(null);
+    }
+  };
+
   return (
     <div>
       <h1>Patient Records Management</h1>
@@ -203,7 +236,14 @@ export default function Home() {
               )}
             </tbody>
           </table>
-          <button onClick={addVaccinationRecord}>Add Vaccination</button>
+          {newVaccination ? (
+            <>
+              <button onClick={saveNewVaccination}>Save</button>
+              <button>Cancel</button>
+            </>
+          ) : (
+            <button onClick={addVaccinationRecord}>Add Vaccination</button>
+          )}
         </form>
       )}
     </div>

@@ -42,28 +42,29 @@ export async function GET() {
 }
 
 export async function POST(request) {
-  const { id, country } = request.json;
+  const { id, country, disease, brand, date, healthCareProvider } =
+    await request.json();
+
+  const command = `peer chaincode invoke -o ${ordererHost} -C ch1 -n vaccinecc -c '{"Args":["AddVaccinationToPatient", "${id}", "${country}", "${disease}", "${brand}", "${date}", "${healthCareProvider}"]}'`;
+  console.log("Command: " + command);
   let promise = new Promise((resolve, reject) => {
-    exec(
-      `peer chaincode invoke -o ${ordererHost} -C ch1 -n vaccinecc -c '{"Args":["AddVaccineToPatientRecord", "${id}", "${country}"]}'`,
-      (error, stdout, stderr) => {
-        if (error) {
-          console.log(`error: ${error.message}`);
-          reject(error.message);
-          return;
-        }
-        if (stderr) {
-          console.log(`stderr: ${stderr}`);
-          reject(stderr);
-          return;
-        }
-        console.log(`stdout: ${stdout}`);
-        resolve(stdout);
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        console.log(`error: ${error.message}`);
+        reject(error.message);
+        return;
       }
-    );
+      if (stderr) {
+        console.log(`stderr: ${stderr}`);
+        reject(stderr);
+        return;
+      }
+      console.log(`stdout: ${stdout}`);
+      resolve(stdout);
+    });
   });
 
   const result = await promise;
-  console.log(result);
+
   return NextResponse.json(JSON.parse(result));
 }

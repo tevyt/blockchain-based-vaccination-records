@@ -112,10 +112,10 @@ func (s *SmartContract) ReadVaccinationListing(ctx contractapi.TransactionContex
 	return &vaccinationListing, nil
 }
 
-func (s *SmartContract) AddVaccinationToPatient(ctx contractapi.TransactionContextInterface, nationalID string, country string, disease string, brand string, vaccineDate string, healthCareProvider string) error {
+func (s *SmartContract) AddVaccinationToPatient(ctx contractapi.TransactionContextInterface, nationalID string, country string, disease string, brand string, vaccineDate string, healthCareProvider string) (*Patient, error) {
 	patient, err := s.ReadPatient(ctx, nationalID, country)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	validVaccines, err := s.ReadVaccinationListing(ctx)
@@ -138,17 +138,18 @@ func (s *SmartContract) AddVaccinationToPatient(ctx contractapi.TransactionConte
 				patientJSON, err := json.Marshal(patient)
 
 				if err != nil {
-					return err
+					return nil, err
 				}
 
-				return ctx.GetStub().PutState(patient.ID, patientJSON)
+				ctx.GetStub().PutState(patient.ID, patientJSON)
+				return patient, nil
 
 			}
 		}
-		return fmt.Errorf("The vaccine is not valid")
+		return nil, fmt.Errorf("The vaccine is not valid")
 	}
 
-	return err
+	return nil, err
 }
 
 // Create ID from nationalID and country
