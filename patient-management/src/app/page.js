@@ -1,8 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import countryList from "./countries";
 import axios from "axios";
+import { format } from "date-fns";
 
 export default function Home() {
   const [patientId, setPatientId] = useState("");
@@ -12,6 +13,19 @@ export default function Home() {
     error: null,
     loading: false,
   });
+
+  const [vaccineListing, setVaccineListing] = useState({});
+
+  const [newVaccination, setNewVaccination] = useState(null);
+
+  useEffect(() => {
+    const fetchVaccineListing = async () => {
+      const { data } = await axios.get("/api/vaccines");
+      setVaccineListing(data);
+      console.log("Data: ", data);
+    };
+    fetchVaccineListing();
+  }, []);
 
   const handlePatientIDChange = (e) => {
     setPatientId(e.target.value);
@@ -35,14 +49,45 @@ export default function Home() {
     }
   };
 
+  const addVaccinationRecord = (e) => {
+    e.preventDefault();
+    setNewVaccination({
+      disease: Object.keys(vaccineListing)[0],
+      brand: vaccineListing[Object.keys(vaccineListing)[0]][0],
+      healthCareProvider: "",
+      date: format(new Date(), "yyyy-MM-dd"),
+    });
+  };
+
+  const handleNewVaccinationDiseaseChange = (e) => {
+    setNewVaccination((prev) => ({
+      ...prev,
+      disease: e.target.value,
+      brand: vaccineListing[e.target.value][0],
+    }));
+  };
+
+  const handleNewVaccinationBrandChange = (e) => {
+    setNewVaccination((prev) => ({
+      ...prev,
+      brand: e.target.value,
+    }));
+  };
+
+  const handleNewVaccinationHealthCareProviderChange = (e) => {
+    setNewVaccination((prev) => ({
+      ...prev,
+      healthCareProvider: e.target.value,
+    }));
+  };
+
   return (
     <div>
-      <h1>Patient Management</h1>
+      <h1>Patient Records Management</h1>
       <form>
-        <label>Patient ID</label>
+        <label>Patient ID:</label>
         <input type="text" value={patientId} onChange={handlePatientIDChange} />
-
-        <label>Patient Country</label>
+        <label>Patient Country:</label>
         <select value={patientCountry} onChange={handlePatientCountryChange}>
           {Object.keys(countryList).map((countryCode) => {
             return (
@@ -62,55 +107,103 @@ export default function Home() {
       )}
       {patientData.data && (
         <form style={{ marginTop: "20px" }}>
-          <div>
-            <label>First Name</label>
-            <input type="text" disabled value={patientData.data?.firstName} />
-          </div>
-          <div>
-            <label>Last Name</label>
-            <input type="text" disabled value={patientData.data?.lastName} />
-          </div>
-          <div>
-            <label>Date Of Birth</label>
-            <input type="date" disabled value={patientData.data?.dateOfBirth} />
-          </div>
-          <div style={{ marginTop: "10px" }}>
-            <h2>Vaccinations</h2>
-            {patientData.data?.vaccinations?.map((vaccination) => {
-              return (
-                <div key={vaccination.vaccine.id} style={{ marginTop: "10px" }}>
-                  <div>
-                    <label>Disease</label>
+          <h2>Patient Details</h2>
+          <label>First Name:</label>
+          <input type="text" disabled value={patientData.data?.firstName} />
+          <label>Last Name</label>
+          <input type="text" disabled value={patientData.data?.lastName} />
+          <label>Date Of Birth</label>
+          <input type="date" disabled value={patientData.data?.dateOfBirth} />
+          <h2>Vaccinations</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Disease</th>
+                <th>Brand</th>
+                <th>Health Care Provider</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {patientData.data?.vaccinations?.map((vaccination) => {
+                return (
+                  <tr key={vaccination.vaccine.id}>
+                    <td>
+                      <input
+                        type="text"
+                        disabled
+                        value={vaccination.vaccine.disease}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        disabled
+                        value={vaccination.vaccine.brand}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        disabled
+                        value={vaccination.healthCareProvider}
+                      />
+                    </td>
+                    <td>
+                      <input type="date" disabled value={vaccination.date} />
+                    </td>
+                  </tr>
+                );
+              })}
+              {newVaccination && (
+                <tr>
+                  <td>
+                    <select
+                      value={newVaccination.disesae}
+                      onChange={handleNewVaccinationDiseaseChange}
+                    >
+                      {Object.keys(vaccineListing).map((disesae) => {
+                        return (
+                          <option key={disesae} value={disesae}>
+                            {disesae}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </td>
+                  <td>
+                    <select
+                      value={newVaccination.brand}
+                      onChange={handleNewVaccinationBrandChange}
+                    >
+                      {newVaccination.disease
+                        ? vaccineListing[newVaccination.disease].map(
+                            (brand) => {
+                              return (
+                                <option key={brand} value={brand}>
+                                  {brand}
+                                </option>
+                              );
+                            }
+                          )
+                        : []}
+                    </select>
+                  </td>
+                  <td>
                     <input
                       type="text"
-                      disabled
-                      value={vaccination.vaccine.disease}
+                      value={newVaccination.healthCareProvider}
+                      onChange={handleNewVaccinationHealthCareProviderChange}
                     />
-                  </div>
-                  <div>
-                    <label>Brand</label>
-                    <input
-                      type="text"
-                      disabled
-                      value={vaccination.vaccine.brand}
-                    />
-                  </div>
-                  <div>
-                    <label>Health Care Provider</label>
-                    <input
-                      type="text"
-                      disabled
-                      value={vaccination.healthCareProvider}
-                    />
-                  </div>
-                  <div>
-                    <label>Date</label>
-                    <input type="date" disabled value={vaccination.date} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                  </td>
+                  <td>
+                    <input type="date" value={newVaccination.date} />
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+          <button onClick={addVaccinationRecord}>Add Vaccination</button>
         </form>
       )}
     </div>
