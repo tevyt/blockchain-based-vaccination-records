@@ -114,6 +114,11 @@ export default function Home() {
     }
   };
 
+  const cancelNewVaccination = (e) => {
+    e.preventDefault();
+    setNewVaccination(null);
+  };
+
   return (
     <div>
       <h1>Patient Records Management</h1>
@@ -239,7 +244,7 @@ export default function Home() {
           {newVaccination ? (
             <>
               <button onClick={saveNewVaccination}>Save</button>
-              <button>Cancel</button>
+              <button onClick={cancelNewVaccination}>Cancel</button>
             </>
           ) : (
             <button onClick={addVaccinationRecord}>Add Vaccination</button>
