@@ -22,7 +22,6 @@ export default function Home() {
     const fetchVaccineListing = async () => {
       const { data } = await axios.get("/api/vaccines");
       setVaccineListing(data);
-      console.log("Data: ", data);
     };
     fetchVaccineListing();
   }, []);
@@ -74,6 +73,13 @@ export default function Home() {
     }));
   };
 
+  const handleNewVaccinationDateChange = (e) => {
+    setNewVaccination((prev) => ({
+      ...prev,
+      date: e.target.value,
+    }));
+  };
+
   const saveNewVaccination = async (e) => {
     e.preventDefault();
     try {
@@ -96,6 +102,7 @@ export default function Home() {
                   disease: newVaccination.disease,
                   id: newVaccination.disease + newVaccination.brand,
                   healthCareProvider: newVaccination.healthCareProvider,
+                  date: newVaccination.date,
                 },
               },
             ],
@@ -228,7 +235,11 @@ export default function Home() {
                     />
                   </td>
                   <td>
-                    <input type="date" value={newVaccination.date} />
+                    <input
+                      type="date"
+                      value={newVaccination.date}
+                      onChange={handleNewVaccinationDateChange}
+                    />
                   </td>
                 </tr>
               )}
