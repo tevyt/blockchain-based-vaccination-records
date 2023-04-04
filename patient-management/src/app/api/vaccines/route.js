@@ -36,7 +36,6 @@ export async function GET() {
       vaccineMap.get(vaccine.disease).push(vaccine.brand);
     }
   });
-  console.log(vaccineMap);
 
   return NextResponse.json(Object.fromEntries(vaccineMap));
 }
@@ -46,7 +45,6 @@ export async function POST(request) {
     await request.json();
 
   const command = `peer chaincode invoke -o ${ordererHost} -C ch1 -n vaccinecc -c '{"Args":["AddVaccinationToPatient", "${id}", "${country}", "${disease}", "${brand}", "${date}", "${healthCareProvider}"]}'`;
-  console.log("Command: " + command);
   let promise = new Promise((resolve, reject) => {
     exec(command, (error, stdout, stderr) => {
       if (error) {

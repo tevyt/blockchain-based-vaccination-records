@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 import countryList from "./countries";
 import axios from "axios";
@@ -90,6 +91,7 @@ export default function Home() {
       });
     } finally {
       setPatientData((patiendData) => {
+        console.log("New vaccination: ", newVaccination);
         return {
           ...patiendData,
           data: {
@@ -122,6 +124,7 @@ export default function Home() {
   return (
     <div>
       <h1>Patient Records Management</h1>
+      <Link href="/patient/new">Add New Patient</Link>
       <form>
         <label>Patient ID:</label>
         <input type="text" value={patientId} onChange={handlePatientIDChange} />

@@ -32,3 +32,32 @@ export async function GET(request) {
   console.log(result);
   return NextResponse.json(JSON.parse(result));
 }
+
+export async function POST(request) {
+  const { nationalID, country, firstName, lastName, dateOfBirth } =
+    await request.json();
+
+  console.log(nationalID, country, firstName, lastName, dateOfBirth);
+  let promise = new Promise((resolve, reject) => {
+    exec(
+      `peer chaincode invoke -o ${ordererHost} -C ch1 -n vaccinecc -c '{"Args":["CreatePatient", "${nationalID}", "${country}", "${firstName}", "${lastName}", "${dateOfBirth}"]}'`,
+      (error, stdout, stderr) => {
+        if (error) {
+          console.log(`error: ${error.message}`);
+          reject(error.message);
+          return;
+        }
+        if (stderr) {
+          console.error(`stderr: ${stderr}`);
+          reject(stderr);
+          return;
+        }
+        console.log(`stdout: ${stdout}`);
+        resolve(stdout);
+      }
+    );
+  });
+
+  const result = await promise;
+  return NextResponse.json(result);
+}
