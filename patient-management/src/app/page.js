@@ -91,7 +91,6 @@ export default function Home() {
       });
     } finally {
       setPatientData((patiendData) => {
-        console.log("New vaccination: ", newVaccination);
         return {
           ...patiendData,
           data: {

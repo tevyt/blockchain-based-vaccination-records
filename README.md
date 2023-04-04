@@ -4,7 +4,7 @@ This project is a blockchain-based system which uses Hyperledger Fabric to secur
 
 Overall, the project aims to improve the accuracy and efficiency of vaccination records, while also ensuring data security and privacy. With a secure, blockchain-based systen in place, healthcare providers can have greater confidence in the integrity of vaccination records, and patients can have more control over their healthcare data.
 
-## Running the project in development mode. 
+## Running the project in development mode.
 
 1. Clone the Fabric Repository from [Github](https://github.com/hyperledger/fabric).
 2. From the Fabric directory run the commands to build the orderer, peer and configtxgen binaries:
@@ -31,14 +31,16 @@ export FABRIC_CFG_PATH=$(pwd)/sampleconfig
 sudo mkdir /var/hyperledger
 sudo chown $USER /var/hyperledger
 ```
+
 6. Generate the genesis block for the ordering service. Run the following command to generate the genesis block and store it in `$(pwd)/sampleconfig/genesisblock` so that it can be used by the orderer in the next step when the orderer is started.
 
 ```bash
 configtxgen -profile SampleDevModeSolo -channelID syschannel -outputBlock genesisblock -configPath $FABRIC_CFG_PATH -outputBlock "$(pwd)/sampleconfig/genesisblock"
 ```
 
-### Start the orderer 
-Run the following command to start the orderer  with the `SampleDevModeSolo` profile and start the ordering service:
+### Start the orderer
+
+Run the following command to start the orderer with the `SampleDevModeSolo` profile and start the ordering service:
 
 ```bash
 ORDERER_GENERAL_GENESISPROFILE=SampleDevModeSolo orderer
@@ -95,7 +97,7 @@ When `DevMode` is enabled on the peer, environment variable `CORE_CHAINCODE_ID_N
 CORE_CHAINCODE_LOGLEVEL=debug CORE_PEER_TLS_ENABLED=false CORE_CHAINCODE_ID_NAME=vaccinecc:1.0 ./simpleChaincode -peer.address 127.0.0.1:7052
 ```
 
-### Approve and commit the chaincode definition 
+### Approve and commit the chaincode definition
 
 Now you need to run the following Fabric chaincode lifecycle commands to approve and commit the chaincode definition the channel:
 
@@ -114,11 +116,13 @@ In HyperLedger Fabric chaincode there are 2 types of operations `query` and `inv
 - `PatientExists` searches for a patient by ID, returns the a `boolean` value indicating whether or not a record exists for this patient.
 
 Command:
+
 ```bash
 CORE_PEER_ADDRESS=127.0.0.1:7051 peer chaincode query -o 127.0.0.1:7050 -C ch1 -n vaccinecc -c '{"Args":["PatientExists","124"]}'
 ```
 
 Response:
+
 ```json
 true
 ```
@@ -126,11 +130,13 @@ true
 - `CreatePatient` creates a patient record and saves it arguments are `id`, `firstName`, `lastName` and `dateOfBirth` in that order
 
 Command:
+
 ```bash
 CORE_PEER_ADDRESS=127.0.0.1:7051 peer chaincode invoke -o 127.0.0.1:7050 -C ch1 -n vaccinecc -c '{"Args":["CreatePatient","125", "Travis", "Smith", "1994-04-15"]}'
 ```
 
 Response:
+
 ```bash
 2023-02-23 17:45:30.834 EST 0001 INFO [chaincodeCmd] chaincodeInvokeOrQuery -> Chaincode invoke successful. result: status:200
 ```
@@ -144,11 +150,18 @@ CORE_PEER_ADDRESS=127.0.0.1:7051 peer chaincode query -o 127.0.0.1:7050 -C ch1 -
 ```
 
 Response:
+
 ```json
-{"id":"125","firstName":"Travis","lastName":"Smith","dateOfBirth":"1994-04-15","vaccinations":[]}
+{
+  "id": "125",
+  "firstName": "Travis",
+  "lastName": "Smith",
+  "dateOfBirth": "1994-04-15",
+  "vaccinations": []
+}
 ```
 
-- `AddVaccination` adds a vaccine to the patient's record the arguments are `patientID`, `vaccineName` `vaccineDate` and `healthCareProvider` in that order. 
+- `AddVaccination` adds a vaccine to the patient's record the arguments are `patientID`, `vaccineName` `vaccineDate` and `healthCareProvider` in that order.
 
 Command:
 
@@ -159,14 +172,30 @@ CORE_PEER_ADDRESS=127.0.0.1:7051 peer chaincode invoke -o 127.0.0.1:7050 -C ch1 
 Response:
 
 ```bash
-2023-02-24 14:10:35.662 EST 0001 INFO [chaincodeCmd] chaincodeInvokeOrQuery -> Chaincode invoke successful. result: status:200 payload:"{\"id\":\"125\",\"firstName\":\"Travis\",\"lastName\":\"Smith\",\"dateOfBirth\":\"1994-04-15\",\"vaccinations\":[{\"id\":\"a7919e4c-f37f-41e6-be7b-9b764b85e28c\",\"name\":\"COVID-19\",\"date\":\"2020-10-10\",\"healthCareProvider\":\"City MD\"}]}" 
+2023-02-24 14:10:35.662 EST 0001 INFO [chaincodeCmd] chaincodeInvokeOrQuery -> Chaincode invoke successful. result: status:200 payload:"{\"id\":\"125\",\"firstName\":\"Travis\",\"lastName\":\"Smith\",\"dateOfBirth\":\"1994-04-15\",\"vaccinations\":[{\"id\":\"a7919e4c-f37f-41e6-be7b-9b764b85e28c\",\"name\":\"COVID-19\",\"date\":\"2020-10-10\",\"healthCareProvider\":\"City MD\"}]}"
 ```
+
+- `SyncVaccinationListing` updates list of approved CDC vaccines. Vaccinations cannot be added if they do not appear on this list.
+
+## DApps
+
+- [sync-available vaccintions](/sync-available-vaccinations/)
+  - Updates the list of vaccines. Data is pulled from publicly available informtation on the vaccines approved by the CDC. The script is written in Javascript and can be executed on a peer with nodejs installed.
+  ```bash
+  npm install
+  node ./index.js
+  ```
+- [patient-management](/patient-management/)
+  - Interface that may be used by health care providers to create and manage patient vaccination records. Written using [Next.js](https://nextjs.org/). Can be executed on a peer with node installed.
+    ![Screenshot from the patient management screen.](/docs/patient_management.png)
 
 ## TODO
 
 The following task are still to be completed.
 
-- [ ] Generate patient ID rather than requiring one on patient creation, this prevents duplicate IDs.
-- [ ] Create a DApp for patient record creation and maintainance.
+- [x] Generate patient ID rather than requiring one on patient creation, this prevents duplicate IDs.
+- [x] Create a DApp for patient record creation and maintainance.
+- [x] Adds script for synchronizing with the CDC's list of approved vaccines.
 - [ ] Create DApp for vaccination record verification.
-- [ ] Design and deploy production architecture proof-of-concept. 
+- [ ] Design and deploy production architecture proof-of-concept.
+- [ ] Add permissions around invoke/query methods.
