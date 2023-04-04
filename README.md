@@ -189,6 +189,12 @@ Response:
   - Interface that may be used by health care providers to create and manage patient vaccination records. Written using [Next.js](https://nextjs.org/). Can be executed on a peer with node installed.
     ![Screenshot from the patient management screen.](/docs/patient_management.png)
 
+## Architecture
+
+Each of the components listed below will run on their own peer. HyperLedger allows for peers to be asigned functions based on their purpose in the network. In addition, each peer stores a copy of the blockchain, allowing for peers on the network to endorse changes. This prevents a single rogue healthcare provider from fradulently modifying patient records.
+
+![Architecture of HyperLedger blockchain network.](/docs/HyperLedger%20Based%20Vaccination%20Verification.drawio.png)
+
 ## TODO
 
 The following task are still to be completed.
