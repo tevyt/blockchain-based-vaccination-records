@@ -29,7 +29,6 @@ export async function GET(request) {
   });
 
   const result = await promise;
-  console.log(result);
   return NextResponse.json(JSON.parse(result));
 }
 

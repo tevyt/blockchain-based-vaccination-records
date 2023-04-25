@@ -173,6 +173,23 @@ func (s *SmartContract) SyncVaccinationListing(ctx contractapi.TransactionContex
 	return ctx.GetStub().PutState("vaccinationListing", vaccinationListingJSON)
 }
 
+func (s *SmartContract) GetPatientByID(ctx contractapi.TransactionContextInterface, id string) (*Patient, error) {
+	patientJSON, err := ctx.GetStub().GetState(id)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to read from world state: %v", err)
+	}
+
+	patient := Patient{}
+
+	jsonMarshallingError := json.Unmarshal(patientJSON, &patient)
+
+	if jsonMarshallingError != nil {
+		return nil, jsonMarshallingError
+	}
+
+	return &patient, nil
+}
+
 func main() {
 	vaccinationChainCode, err := contractapi.NewChaincode(new(SmartContract))
 	if err != nil {
