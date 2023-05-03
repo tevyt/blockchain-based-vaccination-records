@@ -1,7 +1,7 @@
 import { exec } from "child_process";
 import { NextResponse } from "next/server";
 
-const ordererHost = "127.0.0.1:7050";
+const ordererHost = process.env.ORDERER_URL || "127.0.0.1:7050";
 
 export async function GET() {
   let promise = new Promise((resolve, reject) => {
