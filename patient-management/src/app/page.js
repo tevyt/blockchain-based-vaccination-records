@@ -19,6 +19,11 @@ export default function Home() {
 
   const [newVaccination, setNewVaccination] = useState(null);
 
+  console.log(
+    "Health care provider: ",
+    process.env.NEXT_PUBLIC_HEALTH_CARE_PROVIDER
+  );
+
   useEffect(() => {
     const fetchVaccineListing = async () => {
       const { data } = await axios.get("/api/vaccines");
