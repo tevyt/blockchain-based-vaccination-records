@@ -54,7 +54,8 @@ export default function Home() {
     setNewVaccination({
       disease: Object.keys(vaccineListing)[0],
       brand: vaccineListing[Object.keys(vaccineListing)[0]][0],
-      healthCareProvider: process.env["HEALTH_CARE_PROVIDER"] || "City MD",
+      healthCareProvider:
+        process.env.NEXT_PUBLIC_HEALTH_CARE_PROVIDER || "City MD",
       date: format(new Date(), "yyyy-MM-dd"),
     });
   };
@@ -186,7 +187,10 @@ export default function Home() {
                       <input
                         type="text"
                         disabled
-                        value={process.env["HEALTH_CARE_PROVIDER"] || "City MD"}
+                        value={
+                          process.env.NEXT_PUBLIC_HEALTH_CARE_PROVIDER ||
+                          "City MD"
+                        }
                       />
                     </td>
                     <td>

@@ -66,7 +66,10 @@ export default function Page({ params }: { params: { id: string } }) {
                       <input
                         type="text"
                         disabled
-                        value={process.env["HEALTH_CARE_PROVIDER"] || "City MD"}
+                        value={
+                          process.env.NEXT_PUBLIC_HEALTH_CARE_PROVIDER ||
+                          "City MD"
+                        }
                       />
                     </td>
                     <td>
