@@ -192,10 +192,7 @@ export default function Home() {
                       <input
                         type="text"
                         disabled
-                        value={
-                          process.env.NEXT_PUBLIC_HEALTH_CARE_PROVIDER ||
-                          "City MD"
-                        }
+                        value={vaccination.vaccine.healthCareProvider}
                       />
                     </td>
                     <td>
