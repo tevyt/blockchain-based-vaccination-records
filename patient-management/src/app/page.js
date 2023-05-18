@@ -192,7 +192,7 @@ export default function Home() {
                       <input
                         type="text"
                         disabled
-                        value={vaccination.vaccine.healthCareProvider}
+                        value={vaccination.healthCareProvider}
                       />
                     </td>
                     <td>
