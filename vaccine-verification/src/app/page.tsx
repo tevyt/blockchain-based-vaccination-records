@@ -2,6 +2,7 @@
 import { Inter } from "next/font/google";
 import countries from "./utils/countries";
 import axios from "axios";
+import { redirect } from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +18,7 @@ export default function Home() {
 
     const { id } = res.data;
 
-    console.log(id);
+    redirect(`/patient/${id}`);
   };
 
   return (

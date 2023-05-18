@@ -44,6 +44,7 @@ export default function Page({ params }: { params: { id: string } }) {
                   disease: string | number | readonly string[] | undefined;
                   brand: string | number | readonly string[] | undefined;
                 };
+                healthCareProvider: string;
                 date: string | number | readonly string[] | undefined;
               }) => {
                 return (
@@ -66,10 +67,7 @@ export default function Page({ params }: { params: { id: string } }) {
                       <input
                         type="text"
                         disabled
-                        value={
-                          process.env.NEXT_PUBLIC_HEALTH_CARE_PROVIDER ||
-                          "City MD"
-                        }
+                        value={vaccination.healthCareProvider}
                       />
                     </td>
                     <td>
