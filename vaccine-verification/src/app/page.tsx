@@ -2,11 +2,12 @@
 import { Inter } from "next/font/google";
 import countries from "./utils/countries";
 import axios from "axios";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+  const router = useRouter();
   const searchPatient = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const nationalID = e.currentTarget.nationalID.value;
@@ -18,7 +19,7 @@ export default function Home() {
 
     const { id } = res.data;
 
-    redirect(`/patient/${id}`);
+    router.push(`/patient/${id}`);
   };
 
   return (
